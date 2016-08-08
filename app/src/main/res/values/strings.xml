@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Post</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--首页TAB-->
+    <string name="page_discover">推荐</string>
+    <string name="page_goods">商品</string>
+    <string name="page_article">图文</string>
+
+
+</resources>
