@@ -52,4 +52,8 @@ public class OneTabFrgment extends BaseFrgment{
     private  void demo1(){
         
     }
+
+    private  void demo2(){
+        
+    }
 }
