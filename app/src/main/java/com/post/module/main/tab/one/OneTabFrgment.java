@@ -48,4 +48,8 @@ public class OneTabFrgment extends BaseFrgment{
     private void loadData(View view){
         getData();
     }
+
+    private  void demo1(){
+        
+    }
 }
