@@ -1,62 +1,52 @@
-package com.post.module.main;
+package com.post.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Toast;
 
-import com.gigamole.library.navigationtabstrip.NavigationTabStrip;
+import com.alibaba.fastjson.JSON;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.post.R;
-import com.post.activity.ScrollsActivity;
+import com.post.bean.Discover;
 import com.post.module.main.base.BaseActivity;
-import com.post.module.main.base.adapter.FrgmentAdapter;
-import com.post.module.main.tab.one.OneTabFrgment;
-import com.post.module.main.tab.three.ThreeTabFrgment;
-import com.post.module.main.tab.two.TwoTabFrgment;
+import com.post.module.main.tab.one.OneTabFrgmentAdapter;
+import com.post.net.NetConfig;
+import com.post.widget.recycleview.LoadMoreListener;
+import com.post.widget.recycleview.RecyclerViewUpRefresh;
 
-import java.util.ArrayList;
+public class ScrollsActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener, LoadMoreListener {
 
-public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+    private final int NET_TAG = 1001;
+    private final int NET_TAG_REFRESH = 1002;
+    private final int NET_TAG_LOAD_MORE = 1003;
 
-    @ViewInject(R.id.vp)
-    ViewPager viewPager;
+    @ViewInject(R.id.rv)
+    RecyclerViewUpRefresh recyclerViewUpRefresh;
 
+    @ViewInject(R.id.sr)
+    SwipeRefreshLayout swipeRefreshLayout;
 
-    @ViewInject(R.id.nts_bottom)
-    NavigationTabStrip mBottomNavigationTabStrip;
+    OneTabFrgmentAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setBackEnable(false);//enable Parallax back
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_scrolls);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-//        viewPager = (ViewPager) findViewById(R.id.vp);
-//        mBottomNavigationTabStrip = (NavigationTabStrip) findViewById(R.id.nts_bottom);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,7 +73,7 @@ public class MainActivity extends BaseActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.scrolls, menu);
         return true;
     }
 
@@ -110,7 +100,6 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            startActivity(new Intent(this, ScrollsActivity.class));
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -131,24 +120,46 @@ public class MainActivity extends BaseActivity
     @Override
     public void init() {
 
-        ArrayList<Fragment> fragmentList = new ArrayList<Fragment>();
 
-        fragmentList.add(new OneTabFrgment());
-        fragmentList.add(new TwoTabFrgment());
-        fragmentList.add(new ThreeTabFrgment());
+        swipeRefreshLayout.setOnRefreshListener(this);
+        recyclerViewUpRefresh.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new OneTabFrgmentAdapter(this);
+        recyclerViewUpRefresh.setAdapter(adapter);
+        recyclerViewUpRefresh.setNestedScrollingEnabled(false);
+        recyclerViewUpRefresh.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(ScrollsActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        viewPager.setAdapter(new FrgmentAdapter(getSupportFragmentManager(), fragmentList));
-        viewPager.setOffscreenPageLimit(2);
-        mBottomNavigationTabStrip.setViewPager(viewPager, 0);
+        getAsync(NetConfig.TEST_URL, new String[]{}, new String[]{}, NET_TAG, true);
     }
 
     @Override
     public void succeed(Object o, int tag) {
 
+        switch (tag){
+            case NET_TAG:
+                Discover discover =  JSON.parseObject(o.toString(), Discover.class);
+                adapter.addDataTop(discover.getEntities());
+                break;
+        }
     }
 
     @Override
     public void error(int tag) {
+
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    @Override
+    public void onLoadMore() {
 
     }
 }

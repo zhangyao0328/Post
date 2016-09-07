@@ -10,6 +10,7 @@
     <string name="page_discover">推荐</string>
     <string name="page_goods">商品</string>
     <string name="page_article">图文</string>
+    <string name="title_activity_scrolls">ScrollsActivity</string>
 
 
 </resources>

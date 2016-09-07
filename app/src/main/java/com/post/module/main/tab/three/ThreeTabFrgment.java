@@ -1,6 +1,5 @@
 package com.post.module.main.tab.three;
 
-import com.post.R;
 import com.post.module.main.base.BaseFrgment;
 
 /**
@@ -8,9 +7,11 @@ import com.post.module.main.base.BaseFrgment;
  */
 public class ThreeTabFrgment extends BaseFrgment {
 
+
+
     @Override
-    public int setContentview() {
-        return R.layout.layout_test;
+    public void init() {
+
     }
 
     @Override

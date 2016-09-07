@@ -10,10 +10,12 @@
     android:orientation="vertical"
     >
 
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/black_page_bg">
+        android:background="@color/black_page_bg"
+        >
 
         <com.gigamole.library.navigationtabstrip.NavigationTabStrip
             android:id="@+id/nts_bottom"
@@ -27,7 +29,10 @@
             app:nts_inactive_color="#81ffffff"
             app:nts_titles="@array/titles"
             app:nts_typeface="fonts/drugs.otf"
-            app:nts_weight="3dp" />
+            app:nts_weight="3dp"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            />
 
     </FrameLayout>
 
@@ -35,5 +40,9 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
+
+
 </LinearLayout>
